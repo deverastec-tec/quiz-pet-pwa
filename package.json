@@ -1,7 +1,7 @@
 {
-  "name": "quiz-pet-pwa",
+  "name": "pet-rescue-blocks-pwa",
   "version": "1.0.0",
-  "description": "PWA de quizzes pet sem login e sem banco de dados.",
+  "description": "Jogo PWA mobile inspirado em Tetris com tema de resgate animal.",
   "private": true,
   "type": "module",
   "scripts": {

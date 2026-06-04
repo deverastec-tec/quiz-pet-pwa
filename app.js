@@ -1,428 +1,493 @@
-const quizCatalog = [
-  {
-    id: "breed",
-    title: "Que raca e essa?",
-    short: "Olhe o desenho e escolha a raca correta.",
-    accent: "#dff3e7",
-    icon: "?"
-  },
-  {
-    id: "story",
-    title: "Acerte o final da historia",
-    short: "Leia a situacao e escolha o desfecho mais provavel.",
-    accent: "#fff0cc",
-    icon: "..."
-  },
-  {
-    id: "truth",
-    title: "Verdadeiro ou falso",
-    short: "Curiosidades rapidas sobre cachorros.",
-    accent: "#d8edf5",
-    icon: "V/F"
-  },
-  {
-    id: "match",
-    title: "Qual cachorro combina com voce?",
-    short: "Responda e veja o perfil de cao que combina com sua rotina.",
-    accent: "#ffe1da",
-    icon: "+"
-  }
+const COLS = 10;
+const ROWS = 20;
+const BLOCK = 30;
+const BEST_KEY = "pet-rescue-blocks-best";
+
+const THEMES = {
+  paw: { label: "patinha", color: "#e46f63", mark: "paw" },
+  bone: { label: "osso", color: "#f2bd4b", mark: "bone" },
+  heart: { label: "coracao", color: "#ef5c78", mark: "heart" },
+  food: { label: "racao", color: "#8a6b4b", mark: "food" },
+  house: { label: "casinha", color: "#6aa7bd", mark: "house" },
+  leaf: { label: "abrigo", color: "#78b66d", mark: "paw" },
+  sun: { label: "cuidado", color: "#f0974e", mark: "bone" }
+};
+
+const PIECES = [
+  { shape: [[1, 1, 1, 1]], theme: "bone" },
+  { shape: [[1, 1], [1, 1]], theme: "house" },
+  { shape: [[0, 1, 0], [1, 1, 1]], theme: "paw" },
+  { shape: [[1, 0, 0], [1, 1, 1]], theme: "food" },
+  { shape: [[0, 0, 1], [1, 1, 1]], theme: "heart" },
+  { shape: [[0, 1, 1], [1, 1, 0]], theme: "leaf" },
+  { shape: [[1, 1, 0], [0, 1, 1]], theme: "sun" }
 ];
 
-const breedImages = {
-  dachshund: img("https://commons.wikimedia.org/wiki/Special:FilePath/A%20dachshund.jpg?width=900", "Dachshund", "https://commons.wikimedia.org/wiki/File:A_dachshund.jpg"),
-  pug: img("https://commons.wikimedia.org/wiki/Special:FilePath/Pug%20portrait.jpg?width=900", "Pug", "https://commons.wikimedia.org/wiki/Pug"),
-  poodle: img("https://commons.wikimedia.org/wiki/Special:FilePath/Standard%20Poodle.JPG?width=900", "Poodle", "https://commons.wikimedia.org/wiki/File:Standard_Poodle.JPG"),
-  husky: img("https://commons.wikimedia.org/wiki/Special:FilePath/Siberian%20Husky%20%285743885083%29.jpg?width=900", "Husky Siberiano", "https://commons.wikimedia.org/wiki/File:Siberian_Husky_(5743885083).jpg"),
-  dalmatian: img("https://commons.wikimedia.org/wiki/Special:FilePath/Dalmatian%20dog.jpg?width=900", "Dalmata", "https://commons.wikimedia.org/wiki/File:Dalmatian_dog.jpg"),
-  corgi: img("https://commons.wikimedia.org/wiki/Special:FilePath/Welshgorgi.jpg?width=900", "Corgi", "https://commons.wikimedia.org/wiki/File:Welshgorgi.jpg"),
-  golden: img("https://commons.wikimedia.org/wiki/Special:FilePath/Golden%20Retriever.jpg?width=900", "Golden Retriever", "https://commons.wikimedia.org/wiki/File:Golden_Retriever.jpg"),
-  sharpei: img("https://commons.wikimedia.org/wiki/Special:FilePath/Sharpei.jpg?width=900", "Shar Pei", "https://commons.wikimedia.org/wiki/File:Sharpei.jpg"),
-  pinscher: img("https://commons.wikimedia.org/wiki/Special:FilePath/Miniature%20Pinscher.jpg?width=900", "Pinscher", "https://commons.wikimedia.org/wiki/File:Miniature_Pinscher.jpg"),
-  rottweiler: img("https://commons.wikimedia.org/wiki/Special:FilePath/Rottweiler%20dog%20%281%29.jpg?width=900", "Rottweiler", "https://commons.wikimedia.org/wiki/File:Rottweiler_dog_(1).jpg")
-};
+const canvas = document.querySelector("#gameCanvas");
+const ctx = canvas.getContext("2d");
+const nextCanvas = document.querySelector("#nextCanvas");
+const nextCtx = nextCanvas.getContext("2d");
 
-const questions = {
-  breed: [
-    q("Olhe a foto: que raca e essa?", ["Dachshund", "Husky Siberiano", "Boxer", "Poodle"], 0, "O Dachshund tambem e conhecido como salsichinha.", "long", null, breedImages.dachshund),
-    q("Olhe a foto: que raca e essa?", ["Pug", "Border Collie", "Akita", "Labrador"], 0, "O Pug costuma ser pequeno, robusto e muito expressivo.", "round", null, breedImages.pug),
-    q("Olhe a foto: que raca e essa?", ["Poodle", "Beagle", "Bulldog Ingles", "Chow Chow"], 0, "Poodles aparecem em varios portes e aprendem comandos muito rapido.", "curly", null, breedImages.poodle),
-    q("Olhe a foto: que raca e essa?", ["Husky Siberiano", "Dalmata", "Shih-tzu", "Dogue Alemao"], 0, "O Husky foi criado para tracao em regioes frias.", "wolf", null, breedImages.husky),
-    q("Olhe a foto: que raca e essa?", ["Dalmata", "Corgi", "Golden Retriever", "Pinscher"], 0, "Os Dalmatas sao famosos pela pelagem branca com manchas.", "spots", null, breedImages.dalmatian),
-    q("Olhe a foto: que raca e essa?", ["Corgi", "Samoieda", "Rottweiler", "Maltese"], 0, "Corgis sao pastores baixinhos, muito ativos e atentos.", "short", null, breedImages.corgi),
-    q("Olhe a foto: que raca e essa?", ["Golden Retriever", "Shar Pei", "Doberman", "Lhasa Apso"], 0, "Golden Retrievers sao sociaveis e populares em familias.", "golden", null, breedImages.golden),
-    q("Olhe a foto: que raca e essa?", ["Shar Pei", "Pastor Alemao", "Whippet", "Yorkshire"], 0, "O Shar Pei e conhecido pelas dobras marcantes.", "wrinkle", null, breedImages.sharpei),
-    q("Olhe a foto: que raca e essa?", ["Pinscher", "Sao Bernardo", "Basset Hound", "Old English Sheepdog"], 0, "Pinschers tendem a ser vigilantes apesar do tamanho.", "tiny", null, breedImages.pinscher),
-    q("Olhe a foto: que raca e essa?", ["Rottweiler", "Pomerania", "Poodle Toy", "Beagle"], 0, "Rottweilers sao fortes, leais e precisam de boa socializacao.", "strong", null, breedImages.rottweiler)
-  ],
-  story: [
-    q("Luna ouviu a coleira antes do passeio. O que ela fez?", ["Correu para a porta abanando o rabo", "Foi dormir embaixo da cama", "Escondeu o pote de racao", "Comecou a miar"], 0, "Muitos caes associam sons e objetos a rotinas boas."),
-    q("Theo encontrou um brinquedo novo no sofa. Qual foi o final?", ["Levou para o tutor mostrar sua conquista", "Guardou na geladeira", "Tentou enterrar no aquario", "Chamou o carteiro para brincar"], 0, "Cachorros costumam compartilhar objetos que consideram valiosos."),
-    q("A campainha tocou e Nina levantou as orelhas. Depois disso, ela provavelmente...", ["Foi investigar quem chegou", "Ligou a televisao", "Fez cafe", "Escreveu uma mensagem"], 0, "Sons repentinos despertam comportamento de alerta."),
-    q("Bento aprendeu o comando senta. Quando ganhou petisco, ele...", ["Tentou repetir o comportamento", "Esqueceu que existia comida", "Mudou de cor", "Virou um gato"], 0, "Recompensas ajudam o cachorro a repetir a acao correta."),
-    q("Maya passou pela poca de banho e viu a toalha. O final mais comum e...", ["Desconfiar e tentar negociar com os olhos", "Pedir uma planilha", "Fazer yoga na banheira", "Fingir que e um tapete"], 0, "Banho divide opinioes caninas com bastante drama."),
-    q("No parque, Chico cheirou uma arvore por muito tempo. Ele estava...", ["Lendo informacoes deixadas por outros caes", "Procurando Wi-Fi", "Calculando imposto", "Dormindo em pe"], 0, "O olfato e uma grande fonte de informacao para caes."),
-    q("Sol soltou a bolinha aos pes do tutor. Ela queria...", ["Continuar a brincadeira", "Trocar por uma vassoura", "Encerrar a amizade", "Pedir silencio absoluto"], 0, "Entregar a bolinha costuma ser convite para brincar."),
-    q("Toby ouviu fogos e ficou inquieto. A melhor atitude do tutor e...", ["Oferecer abrigo tranquilo e seguranca", "Forcar passeio na rua", "Aumentar o barulho", "Ignorar sinais de medo"], 0, "Ambiente seguro e acolhimento ajudam em momentos de medo."),
-    q("Pipoca ganhou um quebra-cabeca com petiscos. O final esperado e...", ["Usar focinho e patas para resolver", "Esperar o brinquedo responder", "Ligar para suporte tecnico", "Enterrar o sofa"], 0, "Enriquecimento ambiental estimula mente e olfato."),
-    q("Amora viu o tutor pegando a mala. Ela provavelmente...", ["Percebeu mudanca de rotina e ficou atenta", "Conferiu o passaporte", "Fez check-in", "Virou motorista"], 0, "Caes observam pistas da rotina humana com muita facilidade.")
-  ],
-  truth: [
-    q("Cachorros podem aprender palavras e sinais por associacao.", ["Verdadeiro", "Falso"], 0, "Eles associam comandos, gestos, sons e contexto."),
-    q("Todo cachorro abana o rabo somente quando esta feliz.", ["Verdadeiro", "Falso"], 1, "O rabo tambem pode indicar ansiedade, alerta ou tensao."),
-    q("Chocolate pode ser perigoso para cachorros.", ["Verdadeiro", "Falso"], 0, "Chocolate contem substancias toxicas para caes."),
-    q("Filhotes nunca precisam de socializacao.", ["Verdadeiro", "Falso"], 1, "Socializacao adequada ajuda a reduzir medo e reatividade."),
-    q("O olfato do cachorro e muito mais sensivel que o humano.", ["Verdadeiro", "Falso"], 0, "O olfato canino e uma das principais formas de explorar o mundo."),
-    q("Cachorros tambem precisam de estimulo mental, nao so passeio.", ["Verdadeiro", "Falso"], 0, "Brinquedos, treino e desafios ajudam no bem-estar."),
-    q("Todas as racas tem exatamente a mesma necessidade de exercicio.", ["Verdadeiro", "Falso"], 1, "Porte, idade, saude e perfil da raca mudam a rotina ideal."),
-    q("Escovar os dentes pode ajudar a saude bucal do cachorro.", ["Verdadeiro", "Falso"], 0, "Higiene bucal reduz acumulo de placa e mau halito."),
-    q("Cachorros idosos ainda podem aprender novos habitos.", ["Verdadeiro", "Falso"], 0, "Com paciencia e reforco positivo, caes adultos e idosos aprendem."),
-    q("Punicao intensa e sempre a melhor forma de educar.", ["Verdadeiro", "Falso"], 1, "Treino com reforco positivo tende a ser mais seguro e eficiente.")
-  ],
-  match: [
-    q("Como e sua rotina durante a semana?", ["Casa tranquila e horarios previsiveis", "Agenda movimentada, mas com pausas", "Muito esporte e ar livre", "Pouco tempo livre"], 0, "Rotina previsivel combina com caes de companhia calmos.", null, ["calm", "social", "active", "independent"]),
-    q("Qual passeio parece mais sua cara?", ["Volta curta no bairro", "Parque com amigos", "Trilha ou corrida", "Caminhada leve sem pressa"], 2, "Energia alta pede um cao que acompanhe atividade intensa.", null, ["calm", "social", "active", "independent"]),
-    q("Quanto pelo pela casa voce tolera?", ["Pouco pelo, por favor", "Sem drama, faz parte", "Pode vir a temporada de pelos", "Prefiro pelagem facil"], 0, "A resposta ajuda a pensar em pelagem e manutencao.", null, ["independent", "social", "active", "calm"]),
-    q("Voce quer um cachorro mais...", ["Colado e carinhoso", "Brincalhao com todos", "Parceiro de aventura", "Reservado e tranquilo"], 0, "Personalidade pesa tanto quanto tamanho.", null, ["calm", "social", "active", "independent"]),
-    q("Mora em qual tipo de espaco?", ["Apartamento compacto", "Casa com quintal", "Perto de parque", "Espaco pequeno e silencioso"], 0, "Espaco ajuda, mas rotina e enriquecimento tambem contam.", null, ["calm", "social", "active", "independent"]),
-    q("Qual compromisso voce topa melhor?", ["Treino basico diario", "Socializacao e brincadeiras", "Exercicio forte frequente", "Cuidado de pelagem organizado"], 2, "Cada perfil pede um tipo de compromisso.", null, ["calm", "social", "active", "independent"]),
-    q("Como voce recebe visitas?", ["Poucas visitas", "Casa vive cheia", "Todo mundo vai para fora brincar", "Prefiro ambiente calmo"], 1, "Caes sociaveis brilham em casas movimentadas.", null, ["calm", "social", "active", "independent"]),
-    q("Seu nivel de experiencia com caes e...", ["Primeiro cachorro", "Ja cuidei algumas vezes", "Tenho bastante experiencia", "Prefiro um companheiro simples"], 0, "Primeiro cachorro costuma pedir perfil mais previsivel.", null, ["calm", "social", "active", "independent"]),
-    q("Que som define seu fim de semana?", ["Serie no sofa", "Gente conversando", "Tenis e mochila", "Cafe e silencio"], 2, "Seu fim de semana entrega muito do cachorro ideal.", null, ["calm", "social", "active", "independent"]),
-    q("O que voce mais valoriza?", ["Companhia calma", "Alegria e interacao", "Energia e obediencia", "Autonomia e elegancia"], 0, "O melhor match e aquele que cabe na vida real.", null, ["calm", "social", "active", "independent"])
-  ]
-};
+const scoreEl = document.querySelector("#score");
+const bestScoreEl = document.querySelector("#bestScore");
+const rescuedPetsEl = document.querySelector("#rescuedPets");
+const lineToast = document.querySelector("#lineToast");
+const startOverlay = document.querySelector("#startOverlay");
+const gameOverOverlay = document.querySelector("#gameOverOverlay");
+const gameOverText = document.querySelector("#gameOverText");
+const gameOverTitle = document.querySelector("#gameOverTitle");
+const installButton = document.querySelector("#installButton");
 
-const matchProfiles = {
-  calm: {
-    title: "Companheiro calmo",
-    text: "Voce combina com caes afetuosos, de rotina estavel e energia moderada, como Cavalier, Shih-tzu ou SRD tranquilo."
-  },
-  social: {
-    title: "Parceiro sociavel",
-    text: "Seu estilo pede um cao brincalhao, amigavel e participativo, como Golden, Beagle ou um SRD expansivo."
-  },
-  active: {
-    title: "Atleta de quatro patas",
-    text: "Voce combina com caes ativos e inteligentes, como Border Collie, Labrador, Husky ou SRD cheio de energia."
-  },
-  independent: {
-    title: "Amigo independente",
-    text: "Seu match e um cao mais reservado, seguro e com boa autonomia, como Chow Chow, Shar Pei ou SRD mais sereno."
-  }
+const buttons = {
+  start: document.querySelector("#startButton"),
+  pause: document.querySelector("#pauseButton"),
+  restart: document.querySelector("#restartButton"),
+  playNow: document.querySelector("#playNowButton"),
+  tryAgain: document.querySelector("#tryAgainButton"),
+  continueAd: document.querySelector("#continueAdButton"),
+  left: document.querySelector("#leftButton"),
+  right: document.querySelector("#rightButton"),
+  rotate: document.querySelector("#rotateButton"),
+  drop: document.querySelector("#dropButton")
 };
 
 const state = {
-  quizId: null,
-  index: 0,
+  board: createBoard(),
+  current: null,
+  next: null,
   score: 0,
-  locked: false,
-  matchScores: {},
-  roundQuestions: []
+  best: Number(localStorage.getItem(BEST_KEY) || 0),
+  rescuedPets: 0,
+  running: false,
+  paused: false,
+  gameOver: false,
+  dropCounter: 0,
+  dropInterval: 760,
+  lastTime: 0
 };
 
-const quizGrid = document.querySelector("#quizGrid");
-const quizStage = document.querySelector("#quizStage");
-const resultStage = document.querySelector("#resultStage");
-const progressText = document.querySelector("#progressText");
-const progressFill = document.querySelector("#progressFill");
-const categoryLabel = document.querySelector("#categoryLabel");
-const questionTitle = document.querySelector("#questionTitle");
-const questionVisual = document.querySelector("#questionVisual");
-const answers = document.querySelector("#answers");
-const feedback = document.querySelector("#feedback");
-const nextButton = document.querySelector("#nextButton");
-const backButton = document.querySelector("#backButton");
-const retryButton = document.querySelector("#retryButton");
-const otherQuizButton = document.querySelector("#otherQuizButton");
-const resultMode = document.querySelector("#resultMode");
-const resultTitle = document.querySelector("#resultTitle");
-const resultText = document.querySelector("#resultText");
-const scoreRing = document.querySelector("#scoreRing");
-const installButton = document.querySelector("#installButton");
+let deferredInstallPrompt = null;
 
-let deferredInstallPrompt;
-
-renderQuizGrid();
+bestScoreEl.textContent = state.best;
+wireEvents();
 registerPwa();
+draw();
 
-document.querySelector("[data-start-random]").addEventListener("click", () => {
-  const randomQuiz = quizCatalog[Math.floor(Math.random() * quizCatalog.length)];
-  startQuiz(randomQuiz.id);
-});
+function wireEvents() {
+  buttons.start.addEventListener("click", startGame);
+  buttons.playNow.addEventListener("click", startGame);
+  buttons.restart.addEventListener("click", startGame);
+  buttons.tryAgain.addEventListener("click", startGame);
+  buttons.pause.addEventListener("click", togglePause);
+  buttons.continueAd.addEventListener("click", continueAfterAd);
+  buttons.left.addEventListener("click", () => move(-1));
+  buttons.right.addEventListener("click", () => move(1));
+  buttons.rotate.addEventListener("click", rotateCurrent);
+  buttons.drop.addEventListener("click", softDrop);
 
-backButton.addEventListener("click", showHome);
-retryButton.addEventListener("click", () => startQuiz(state.quizId));
-otherQuizButton.addEventListener("click", showHome);
-nextButton.addEventListener("click", nextQuestion);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") move(-1);
+    if (event.key === "ArrowRight") move(1);
+    if (event.key === "ArrowUp") rotateCurrent();
+    if (event.key === "ArrowDown") softDrop();
+    if (event.key === " ") hardDrop();
+    if (event.key.toLowerCase() === "p") togglePause();
+  });
 
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  deferredInstallPrompt = event;
-  installButton.hidden = false;
-});
+  let touchStart = null;
+  canvas.addEventListener("touchstart", (event) => {
+    const touch = event.changedTouches[0];
+    touchStart = { x: touch.clientX, y: touch.clientY };
+  }, { passive: true });
 
-installButton.addEventListener("click", async () => {
-  if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  await deferredInstallPrompt.userChoice;
-  deferredInstallPrompt = null;
-  installButton.hidden = true;
-});
+  canvas.addEventListener("touchend", (event) => {
+    if (!touchStart) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStart.x;
+    const dy = touch.clientY - touchStart.y;
+    if (Math.abs(dx) < 22 && Math.abs(dy) < 22) rotateCurrent();
+    else if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 1 : -1);
+    else if (dy > 0) hardDrop();
+    touchStart = null;
+  }, { passive: true });
 
-function img(src, alt, source) {
-  return { src, alt, source };
-}
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.hidden = false;
+  });
 
-function q(title, options, answer, explanation, visual = "default", weights = null, image = null) {
-  return { title, options, answer, explanation, visual, weights, image };
-}
-
-function renderQuizGrid() {
-  quizGrid.innerHTML = quizCatalog
-    .map((quiz) => {
-      const total = questions[quiz.id].length;
-      return `
-        <button class="quiz-card" type="button" data-quiz-id="${quiz.id}">
-          <span class="quiz-icon" style="background:${quiz.accent}">${quiz.icon}</span>
-          <span>
-            <h3>${quiz.title}</h3>
-            <p>${quiz.short}</p>
-          </span>
-          <span class="quiz-meta">${total} perguntas</span>
-        </button>
-      `;
-    })
-    .join("");
-
-  quizGrid.querySelectorAll("[data-quiz-id]").forEach((button) => {
-    button.addEventListener("click", () => startQuiz(button.dataset.quizId));
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installButton.hidden = true;
   });
 }
 
-function startQuiz(quizId) {
-  state.quizId = quizId;
-  state.index = 0;
+function startGame() {
+  window.scrollTo(0, 0);
+  state.board = createBoard();
+  state.current = randomPiece();
+  state.next = randomPiece();
   state.score = 0;
-  state.locked = false;
-  state.matchScores = { calm: 0, social: 0, active: 0, independent: 0 };
-  state.roundQuestions = shuffle(questions[quizId]).map((question) => {
-    const shuffledOptions = shuffle(
-      question.options.map((option, optionIndex) => ({
-        option,
-        isCorrect: optionIndex === question.answer,
-        weight: question.weights ? question.weights[optionIndex] : null
-      }))
-    );
-
-    return { ...question, shuffledOptions };
-  });
-
-  document.querySelector(".hero").hidden = true;
-  document.querySelector(".quiz-picker").hidden = true;
-  resultStage.hidden = true;
-  quizStage.hidden = false;
-  renderQuestion();
-  quizStage.scrollIntoView({ behavior: "smooth", block: "start" });
+  state.rescuedPets = 0;
+  state.running = true;
+  state.paused = false;
+  state.gameOver = false;
+  state.dropCounter = 0;
+  state.dropInterval = 760;
+  startOverlay.hidden = true;
+  gameOverOverlay.hidden = true;
+  buttons.pause.textContent = "Pausar";
+  updateScore();
+  draw();
 }
 
-function renderQuestion() {
-  const current = getCurrentQuestion();
-  const quiz = quizCatalog.find((item) => item.id === state.quizId);
-  const total = state.roundQuestions.length;
-
-  state.locked = false;
-  progressText.textContent = `${state.index + 1} de ${total}`;
-  progressFill.style.width = `${(state.index / total) * 100}%`;
-  categoryLabel.textContent = quiz.title;
-  questionTitle.textContent = current.title;
-  questionVisual.innerHTML = getVisual(current, state.quizId);
-  feedback.hidden = true;
-  feedback.textContent = "";
-  nextButton.hidden = true;
-
-  answers.innerHTML = "";
-  current.shuffledOptions.forEach((answerOption, optionIndex) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "answer-button";
-    button.textContent = answerOption.option;
-    button.addEventListener("click", () => chooseAnswer(optionIndex));
-    answers.appendChild(button);
-  });
+function togglePause() {
+  if (!state.running || state.gameOver) return;
+  state.paused = !state.paused;
+  buttons.pause.textContent = state.paused ? "Continuar" : "Pausar";
+  draw();
 }
 
-function chooseAnswer(optionIndex) {
-  if (state.locked) return;
-  state.locked = true;
+function continueAfterAd() {
+  if (!state.gameOver) return;
+  window.scrollTo(0, 0);
+  gameOverOverlay.hidden = true;
+  state.gameOver = false;
+  state.running = true;
+  state.paused = false;
+  state.board = clearTopRows(state.board, 4);
+  state.current = randomPiece();
+  state.next = randomPiece();
+  draw();
+}
 
-  const current = getCurrentQuestion();
-  const isMatchQuiz = state.quizId === "match";
-  const selected = current.shuffledOptions[optionIndex];
-  const isCorrect = selected.isCorrect;
-  const buttons = [...answers.querySelectorAll(".answer-button")];
+function move(direction) {
+  if (!canPlay()) return;
+  state.current.x += direction;
+  if (collides(state.current)) state.current.x -= direction;
+  draw();
+}
 
-  if (isMatchQuiz) {
-    const profile = selected.weight;
-    state.matchScores[profile] += 1;
-    state.score += 1;
-  } else if (isCorrect) {
-    state.score += 1;
+function rotateCurrent() {
+  if (!canPlay()) return;
+  const oldShape = state.current.shape;
+  const rotated = rotateMatrix(state.current.shape);
+  state.current.shape = rotated;
+  if (collides(state.current)) {
+    state.current.x += state.current.x < COLS / 2 ? 1 : -1;
   }
-
-  buttons.forEach((button, index) => {
-    button.disabled = true;
-    if (isMatchQuiz && index === optionIndex) button.classList.add("correct");
-    if (!isMatchQuiz && current.shuffledOptions[index].isCorrect) button.classList.add("correct");
-    if (!isMatchQuiz && index === optionIndex && !isCorrect) button.classList.add("wrong");
-  });
-
-  feedback.hidden = false;
-  feedback.textContent = isMatchQuiz
-    ? current.explanation
-    : isCorrect
-      ? `Acertou! ${current.explanation}`
-      : `Quase. ${current.explanation}`;
-
-  nextButton.textContent = state.index === state.roundQuestions.length - 1 ? "Ver resultado" : "Proxima";
-  nextButton.hidden = false;
+  if (collides(state.current)) state.current.shape = oldShape;
+  draw();
 }
 
-function nextQuestion() {
-  const total = state.roundQuestions.length;
-  if (state.index < total - 1) {
-    state.index += 1;
-    renderQuestion();
-    return;
-  }
-  showResult();
-}
-
-function showResult() {
-  const quiz = quizCatalog.find((item) => item.id === state.quizId);
-  const total = state.roundQuestions.length;
-  progressFill.style.width = "100%";
-  quizStage.hidden = true;
-  resultStage.hidden = false;
-
-  resultMode.textContent = quiz.title;
-
-  if (state.quizId === "match") {
-    const winner = Object.entries(state.matchScores).sort((a, b) => b[1] - a[1])[0][0];
-    const profile = matchProfiles[winner];
-    resultTitle.textContent = profile.title;
-    resultText.textContent = profile.text;
-    scoreRing.textContent = "Match";
-    scoreRing.style.setProperty("--score", "100%");
+function softDrop() {
+  if (!canPlay()) return;
+  state.current.y += 1;
+  if (collides(state.current)) {
+    state.current.y -= 1;
+    lockPiece();
   } else {
-    const percent = Math.round((state.score / total) * 100);
-    resultTitle.textContent = getScoreTitle(percent);
-    resultText.textContent = `Voce acertou ${state.score} de ${total} perguntas.`;
-    scoreRing.textContent = `${percent}%`;
-    scoreRing.style.setProperty("--score", `${percent}%`);
+    state.score += 1;
+    updateScore();
   }
-
-  resultStage.scrollIntoView({ behavior: "smooth", block: "start" });
+  draw();
 }
 
-function showHome() {
-  quizStage.hidden = true;
-  resultStage.hidden = true;
-  document.querySelector(".hero").hidden = false;
-  document.querySelector(".quiz-picker").hidden = false;
-  document.querySelector("#home").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function getCurrentQuestion() {
-  return state.roundQuestions[state.index];
-}
-
-function shuffle(items) {
-  const shuffled = [...items];
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+function hardDrop() {
+  if (!canPlay()) return;
+  while (!collides(state.current)) {
+    state.current.y += 1;
+    state.score += 2;
   }
-  return shuffled;
+  state.current.y -= 1;
+  lockPiece();
+  draw();
 }
 
-function getScoreTitle(percent) {
-  if (percent >= 90) return "Instinto de especialista";
-  if (percent >= 70) return "Mandou muito bem";
-  if (percent >= 50) return "Bom faro";
-  return "Hora de brincar de novo";
-}
+function update(time = 0) {
+  const delta = time - state.lastTime;
+  state.lastTime = time;
 
-function getVisual(question, quizId) {
-  if (quizId === "breed") {
-    if (question.image) {
-      return `
-        <figure class="dog-photo-card">
-          <img src="${question.image.src}" alt="${question.image.alt}" loading="eager" />
-          <figcaption>
-            <a href="${question.image.source}" target="_blank" rel="noreferrer">Foto: Wikimedia Commons</a>
-          </figcaption>
-        </figure>
-      `;
+  if (state.running && !state.paused && !state.gameOver) {
+    state.dropCounter += delta;
+    if (state.dropCounter > state.dropInterval) {
+      softDrop();
+      state.dropCounter = 0;
     }
-    return `<div class="dog-portrait">${dogSvg(question.visual)}</div>`;
   }
-  if (quizId === "story") {
-    return `<div class="story-visual">...</div>`;
-  }
-  if (quizId === "truth") {
-    return `<div class="true-false-visual">V/F</div>`;
-  }
-  return `<div class="match-visual">Match</div>`;
+
+  requestAnimationFrame(update);
 }
 
-function dogSvg(type) {
-  const configs = {
-    long: ["#b76b38", "38", "18", "M62 126h182c38 0 61 18 61 50v34H42v-42c0-24 8-42 20-42Z", true],
-    round: ["#d8a45f", "56", "34", "M82 92h148c42 0 76 34 76 76v36H42v-36c0-42 34-76 40-76Z", false],
-    curly: ["#f7f0e2", "48", "26", "M76 104h156c42 0 74 31 74 72v30H42v-30c0-41 32-72 34-72Z", false],
-    wolf: ["#7f95a4", "28", "18", "M74 102h160c39 0 70 30 70 69v35H44v-35c0-39 31-69 30-69Z", false],
-    spots: ["#f7f7f2", "40", "22", "M78 102h154c41 0 72 31 72 72v32H44v-32c0-41 31-72 34-72Z", false],
-    short: ["#d99545", "34", "24", "M80 116h148c38 0 66 24 66 58v32H54v-32c0-34 28-58 26-58Z", true],
-    golden: ["#daa647", "44", "30", "M74 102h164c42 0 72 31 72 72v32H38v-32c0-41 31-72 36-72Z", false],
-    wrinkle: ["#b77a57", "50", "36", "M78 98h154c40 0 72 32 72 72v36H44v-36c0-40 32-72 34-72Z", false],
-    tiny: ["#3d2c27", "34", "18", "M92 120h130c34 0 58 25 58 56v30H66v-30c0-31 24-56 26-56Z", false],
-    strong: ["#2d2522", "42", "26", "M70 98h170c44 0 76 32 76 74v34H34v-34c0-42 32-74 36-74Z", false]
-  };
-  const [fur, earW, earH, body, low] = configs[type] || configs.round;
-  const spots = type === "spots" ? `<circle cx="108" cy="136" r="14" fill="#202020"/><circle cx="224" cy="148" r="18" fill="#202020"/><circle cx="174" cy="192" r="11" fill="#202020"/>` : "";
-  const curls = type === "curly" ? `<g fill="#efe5d7">${[68, 98, 128, 158, 188, 218, 248, 278].map((x) => `<circle cx="${x}" cy="112" r="17"/>`).join("")}</g>` : "";
-  const wrinkles = type === "wrinkle" ? `<path d="M114 136h118M102 158h140M118 180h108" stroke="#875438" stroke-width="8" stroke-linecap="round" opacity=".65"/>` : "";
-  const mask = type === "wolf" ? `<path d="M126 112 176 174l50-62c-8-19-27-34-50-34s-42 15-50 34Z" fill="#f2f5f5"/>` : "";
-  const tan = type === "strong" ? `<circle cx="132" cy="142" r="14" fill="#b56f36"/><circle cx="220" cy="142" r="14" fill="#b56f36"/>` : "";
+function lockPiece() {
+  state.current.shape.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      if (cell) {
+        const boardY = state.current.y + y;
+        const boardX = state.current.x + x;
+        if (boardY >= 0) state.board[boardY][boardX] = state.current.theme;
+      }
+    });
+  });
 
-  return `
-    <svg viewBox="0 0 360 280" role="img" aria-label="Desenho de cachorro do quiz">
-      <rect width="360" height="280" rx="28" fill="#fff6e3"/>
-      <path d="${body}" fill="${fur}"/>
-      <ellipse cx="176" cy="${low ? 98 : 90}" rx="82" ry="72" fill="${fur}"/>
-      <ellipse cx="102" cy="104" rx="${earW}" ry="${earH}" fill="#5a3627" transform="rotate(-32 102 104)"/>
-      <ellipse cx="250" cy="104" rx="${earW}" ry="${earH}" fill="#5a3627" transform="rotate(32 250 104)"/>
-      ${curls}
-      ${mask}
-      ${spots}
-      ${tan}
-      ${wrinkles}
-      <circle cx="146" cy="90" r="8" fill="#1c1714"/>
-      <circle cx="206" cy="90" r="8" fill="#1c1714"/>
-      <ellipse cx="176" cy="124" rx="18" ry="13" fill="#1c1714"/>
-      <path d="M176 137c-6 19-28 20-40 8M176 137c6 19 28 20 40 8" fill="none" stroke="#1c1714" stroke-width="7" stroke-linecap="round"/>
-      <path d="M68 206h216" stroke="rgba(20,33,31,.16)" stroke-width="10" stroke-linecap="round"/>
-    </svg>
-  `;
+  const cleared = clearLines();
+  if (cleared > 0) {
+    state.rescuedPets += cleared;
+    state.score += [0, 120, 280, 520, 900][cleared] || cleared * 260;
+    state.dropInterval = Math.max(260, state.dropInterval - cleared * 18);
+    showLineToast(cleared);
+  }
+
+  state.current = state.next;
+  state.next = randomPiece();
+  state.current.x = Math.floor((COLS - state.current.shape[0].length) / 2);
+  state.current.y = -1;
+
+  if (collides(state.current)) endGame();
+  updateScore();
+}
+
+function clearLines() {
+  let cleared = 0;
+  for (let y = ROWS - 1; y >= 0; y -= 1) {
+    if (state.board[y].every(Boolean)) {
+      state.board.splice(y, 1);
+      state.board.unshift(Array(COLS).fill(null));
+      cleared += 1;
+      y += 1;
+    }
+  }
+  return cleared;
+}
+
+function endGame() {
+  state.running = false;
+  state.gameOver = true;
+  if (state.score > state.best) {
+    state.best = state.score;
+    localStorage.setItem(BEST_KEY, String(state.best));
+    gameOverTitle.textContent = "Novo recorde!";
+  } else {
+    gameOverTitle.textContent = "Fim de jogo";
+  }
+  gameOverText.textContent = `${state.score} pontos e ${state.rescuedPets} pets ajudados.`;
+  gameOverOverlay.hidden = false;
+  updateScore();
+}
+
+function updateScore() {
+  scoreEl.textContent = state.score;
+  bestScoreEl.textContent = state.best;
+  rescuedPetsEl.textContent = state.rescuedPets;
+}
+
+function showLineToast(lines) {
+  lineToast.textContent = lines === 1 ? "+1 pet ajudado" : `+${lines} pets ajudados`;
+  lineToast.classList.remove("show");
+  void lineToast.offsetWidth;
+  lineToast.classList.add("show");
+}
+
+function draw() {
+  drawBoard(ctx, canvas.width, canvas.height, BLOCK);
+  state.board.forEach((row, y) => {
+    row.forEach((theme, x) => {
+      if (theme) drawBlock(ctx, x * BLOCK, y * BLOCK, BLOCK, theme);
+    });
+  });
+
+  if (state.current) {
+    state.current.shape.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        if (cell && state.current.y + y >= 0) {
+          drawBlock(ctx, (state.current.x + x) * BLOCK, (state.current.y + y) * BLOCK, BLOCK, state.current.theme);
+        }
+      });
+    });
+  }
+
+  drawNext();
+  if (state.paused) drawCenterLabel("PAUSADO");
+}
+
+function drawBoard(context, width, height, block) {
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = "#213a34";
+  context.fillRect(0, 0, width, height);
+  context.strokeStyle = "rgba(255,255,255,0.055)";
+  context.lineWidth = 1;
+  for (let x = 0; x <= width; x += block) {
+    context.beginPath();
+    context.moveTo(x, 0);
+    context.lineTo(x, height);
+    context.stroke();
+  }
+  for (let y = 0; y <= height; y += block) {
+    context.beginPath();
+    context.moveTo(0, y);
+    context.lineTo(width, y);
+    context.stroke();
+  }
+}
+
+function drawNext() {
+  nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  nextCtx.fillStyle = "#213a34";
+  nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+  if (!state.next) return;
+  const size = 22;
+  const offsetX = (nextCanvas.width - state.next.shape[0].length * size) / 2;
+  const offsetY = (nextCanvas.height - state.next.shape.length * size) / 2;
+  state.next.shape.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      if (cell) drawBlock(nextCtx, offsetX + x * size, offsetY + y * size, size, state.next.theme);
+    });
+  });
+}
+
+function drawBlock(context, x, y, size, themeKey) {
+  const theme = THEMES[themeKey];
+  const radius = Math.max(5, size * 0.18);
+  context.save();
+  context.fillStyle = theme.color;
+  roundRect(context, x + 2, y + 2, size - 4, size - 4, radius);
+  context.fill();
+  context.strokeStyle = "rgba(255,255,255,0.42)";
+  context.lineWidth = 2;
+  context.stroke();
+  context.fillStyle = "rgba(255,255,255,0.88)";
+  drawMark(context, x + size / 2, y + size / 2, size, theme.mark);
+  context.restore();
+}
+
+function drawMark(context, cx, cy, size, mark) {
+  const unit = size / 30;
+  if (mark === "paw") {
+    circle(context, cx, cy + 4 * unit, 5 * unit);
+    circle(context, cx - 7 * unit, cy - 3 * unit, 3.2 * unit);
+    circle(context, cx, cy - 6 * unit, 3.3 * unit);
+    circle(context, cx + 7 * unit, cy - 3 * unit, 3.2 * unit);
+  }
+  if (mark === "bone") {
+    circle(context, cx - 8 * unit, cy - 5 * unit, 4 * unit);
+    circle(context, cx - 8 * unit, cy + 5 * unit, 4 * unit);
+    circle(context, cx + 8 * unit, cy - 5 * unit, 4 * unit);
+    circle(context, cx + 8 * unit, cy + 5 * unit, 4 * unit);
+    roundRect(context, cx - 9 * unit, cy - 4 * unit, 18 * unit, 8 * unit, 4 * unit);
+    context.fill();
+  }
+  if (mark === "heart") {
+    context.beginPath();
+    context.moveTo(cx, cy + 8 * unit);
+    context.bezierCurveTo(cx - 15 * unit, cy - 2 * unit, cx - 8 * unit, cy - 13 * unit, cx, cy - 5 * unit);
+    context.bezierCurveTo(cx + 8 * unit, cy - 13 * unit, cx + 15 * unit, cy - 2 * unit, cx, cy + 8 * unit);
+    context.fill();
+  }
+  if (mark === "food") {
+    roundRect(context, cx - 9 * unit, cy - 7 * unit, 18 * unit, 15 * unit, 4 * unit);
+    context.fill();
+    context.fillStyle = "rgba(33,58,52,0.24)";
+    circle(context, cx - 4 * unit, cy, 2 * unit);
+    circle(context, cx + 4 * unit, cy - 1 * unit, 2 * unit);
+  }
+  if (mark === "house") {
+    context.beginPath();
+    context.moveTo(cx - 11 * unit, cy - 1 * unit);
+    context.lineTo(cx, cy - 12 * unit);
+    context.lineTo(cx + 11 * unit, cy - 1 * unit);
+    context.closePath();
+    context.fill();
+    roundRect(context, cx - 8 * unit, cy - 1 * unit, 16 * unit, 12 * unit, 2 * unit);
+    context.fill();
+    context.fillStyle = "rgba(33,58,52,0.25)";
+    roundRect(context, cx - 3 * unit, cy + 3 * unit, 6 * unit, 8 * unit, 2 * unit);
+    context.fill();
+  }
+}
+
+function drawCenterLabel(text) {
+  ctx.save();
+  ctx.fillStyle = "rgba(23,35,31,0.72)";
+  ctx.fillRect(0, canvas.height / 2 - 44, canvas.width, 88);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 32px system-ui";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  ctx.restore();
+}
+
+function createBoard() {
+  return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+}
+
+function clearTopRows(board, rows) {
+  const nextBoard = board.slice(rows).map((row) => [...row]);
+  while (nextBoard.length < ROWS) nextBoard.unshift(Array(COLS).fill(null));
+  return nextBoard;
+}
+
+function randomPiece() {
+  const template = PIECES[Math.floor(Math.random() * PIECES.length)];
+  return {
+    shape: template.shape.map((row) => [...row]),
+    theme: template.theme,
+    x: Math.floor((COLS - template.shape[0].length) / 2),
+    y: -1
+  };
+}
+
+function rotateMatrix(matrix) {
+  return matrix[0].map((_, index) => matrix.map((row) => row[index]).reverse());
+}
+
+function collides(piece) {
+  return piece.shape.some((row, y) =>
+    row.some((cell, x) => {
+      if (!cell) return false;
+      const boardX = piece.x + x;
+      const boardY = piece.y + y;
+      if (boardX < 0 || boardX >= COLS || boardY >= ROWS) return true;
+      return boardY >= 0 && Boolean(state.board[boardY][boardX]);
+    })
+  );
+}
+
+function canPlay() {
+  return state.running && !state.paused && !state.gameOver && state.current;
+}
+
+function roundRect(context, x, y, width, height, radius) {
+  context.beginPath();
+  context.moveTo(x + radius, y);
+  context.lineTo(x + width - radius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + radius);
+  context.lineTo(x + width, y + height - radius);
+  context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  context.lineTo(x + radius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - radius);
+  context.lineTo(x, y + radius);
+  context.quadraticCurveTo(x, y, x + radius, y);
+  context.closePath();
+}
+
+function circle(context, x, y, radius) {
+  context.beginPath();
+  context.arc(x, y, radius, 0, Math.PI * 2);
+  context.fill();
 }
 
 async function registerPwa() {
-  if ("serviceWorker" in navigator) {
-    try {
-      await navigator.serviceWorker.register("service-worker.js");
-    } catch (error) {
-      console.warn("Service worker indisponivel", error);
-    }
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    await navigator.serviceWorker.register("service-worker.js");
+  } catch (error) {
+    console.warn("Service worker indisponivel", error);
   }
 }
+
+requestAnimationFrame(update);

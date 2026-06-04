@@ -2,9 +2,9 @@ import { readFile } from "node:fs/promises";
 
 const requiredFiles = [
   "index.html",
-  "styles.css",
+  "style.css",
   "app.js",
-  "manifest.webmanifest",
+  "manifest.json",
   "service-worker.js",
   "assets/icon.svg"
 ];
@@ -13,17 +13,27 @@ for (const file of requiredFiles) {
   await readFile(file, "utf8");
 }
 
-const app = await readFile("app.js", "utf8");
-const questionCount = (app.match(/\bq\("/g) || []).length;
+const [html, app, manifest, sw] = await Promise.all([
+  readFile("index.html", "utf8"),
+  readFile("app.js", "utf8"),
+  readFile("manifest.json", "utf8"),
+  readFile("service-worker.js", "utf8")
+]);
 
-if (questionCount < 20 || questionCount > 50) {
-  throw new Error(`Quantidade de perguntas fora da meta: ${questionCount}`);
+for (const text of ["Pet Rescue Blocks", "gameCanvas", "banner-ad", "interstitial-ad"]) {
+  if (!html.includes(text)) throw new Error(`HTML incompleto: ${text}`);
 }
 
-for (const quizId of ["breed", "story", "truth", "match"]) {
-  if (!app.includes(`${quizId}: [`)) {
-    throw new Error(`Quiz ausente: ${quizId}`);
-  }
+for (const text of ["localStorage", "+1 pet ajudado", "continueAfterAd", "requestAnimationFrame"]) {
+  if (!app.includes(text)) throw new Error(`Logica ausente: ${text}`);
 }
 
-console.log(`Check OK: ${questionCount} perguntas e PWA completo.`);
+if (JSON.parse(manifest).name !== "Pet Rescue Blocks") {
+  throw new Error("Manifest com nome incorreto.");
+}
+
+if (!sw.includes("manifest.json") || !sw.includes("style.css")) {
+  throw new Error("Service worker nao esta cacheando o PWA atual.");
+}
+
+console.log("Check OK: Pet Rescue Blocks PWA completo.");
