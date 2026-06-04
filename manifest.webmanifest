@@ -1,0 +1,19 @@
+{
+  "name": "Quiz Pet",
+  "short_name": "Quiz Pet",
+  "description": "Quizzes pet rapidos sobre racas, historias, curiosidades e match de cachorro.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#21705a",
+  "background_color": "#fffaf2",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

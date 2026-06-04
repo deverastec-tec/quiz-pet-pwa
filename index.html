@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#21705a" />
+    <meta
+      name="description"
+      content="Quiz Pet: descubra racas, historias e curiosidades sobre cachorros em um PWA leve e divertido."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Quiz Pet</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar" aria-label="Cabecalho">
+        <a class="brand" href="#home" aria-label="Quiz Pet inicio">
+          <img src="assets/icon.svg" alt="" width="44" height="44" />
+          <span>Quiz Pet</span>
+        </a>
+        <button class="icon-button" id="installButton" type="button" hidden title="Instalar PWA" aria-label="Instalar PWA">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v11m0 0 4-4m-4 4-4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" />
+          </svg>
+        </button>
+      </header>
+
+      <main>
+        <section class="hero" id="home">
+          <div class="hero-copy">
+            <p class="eyebrow">PWA de quiz pet</p>
+            <h1>Quiz Pet</h1>
+            <p>
+              Quatro modos rapidos para testar seu olhar, sua intuicao e seu
+              amor por cachorros.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-action" type="button" data-start-random>
+                Jogar surpresa
+              </button>
+              <span class="question-count">40 perguntas prontas</span>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="dog-card dog-card-one">
+              <span class="dog-face">?</span>
+              <span class="dog-ear left"></span>
+              <span class="dog-ear right"></span>
+            </div>
+            <div class="story-card">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="truth-chip">V/F</div>
+          </div>
+        </section>
+
+        <section class="quiz-picker" aria-labelledby="quizPickerTitle">
+          <div class="section-heading">
+            <h2 id="quizPickerTitle">Escolha um quiz</h2>
+            <p>Sem cadastro, sem banco de dados, direto para jogar.</p>
+          </div>
+          <div class="quiz-grid" id="quizGrid"></div>
+        </section>
+
+        <section class="quiz-stage" id="quizStage" hidden aria-live="polite">
+          <div class="stage-panel">
+            <div class="stage-top">
+              <button class="back-button" id="backButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+                Quizzes
+              </button>
+              <div class="progress-text" id="progressText"></div>
+            </div>
+
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="question-layout">
+              <div class="question-visual" id="questionVisual"></div>
+              <div class="question-body">
+                <p class="category-label" id="categoryLabel"></p>
+                <h2 id="questionTitle"></h2>
+                <div class="answers" id="answers"></div>
+                <div class="feedback" id="feedback" hidden></div>
+                <button class="primary-action next-action" id="nextButton" type="button" hidden>
+                  Proxima
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="result-stage" id="resultStage" hidden>
+          <div class="result-panel">
+            <p class="eyebrow" id="resultMode"></p>
+            <h2 id="resultTitle"></h2>
+            <p id="resultText"></p>
+            <div class="score-ring" id="scoreRing"></div>
+            <div class="result-actions">
+              <button class="primary-action" id="retryButton" type="button">Jogar de novo</button>
+              <button class="secondary-action" id="otherQuizButton" type="button">Outro quiz</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

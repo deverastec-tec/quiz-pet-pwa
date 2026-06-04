@@ -1,0 +1,12 @@
+{
+  "name": "quiz-pet-pwa",
+  "version": "1.0.0",
+  "description": "PWA de quizzes pet sem login e sem banco de dados.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "start": "node scripts/dev-server.mjs",
+    "check": "node scripts/check.mjs"
+  }
+}
