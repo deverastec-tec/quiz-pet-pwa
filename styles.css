@@ -187,133 +187,16 @@ h1 {
   min-height: 430px;
 }
 
-.dog-card,
-.story-card,
-.truth-chip {
-  position: absolute;
-  border: 2px solid rgba(20, 33, 31, 0.08);
-  box-shadow: var(--shadow);
-}
-
-.dog-card {
-  left: 9%;
-  top: 5%;
-  width: min(330px, 74vw);
-  aspect-ratio: 1;
-  border-radius: 42px;
-  background:
-    radial-gradient(circle at 42% 38%, #ffffff 0 8px, transparent 9px),
-    radial-gradient(circle at 58% 38%, #ffffff 0 8px, transparent 9px),
-    linear-gradient(145deg, #8fc0a7, #21705a);
-}
-
-.dog-card-one::before,
-.dog-card-one::after {
-  content: "";
-  position: absolute;
-  background: #37271d;
-}
-
-.dog-card-one::before {
-  left: 38%;
-  top: 52%;
-  width: 24%;
-  height: 13%;
-  border-radius: 50%;
-}
-
-.dog-card-one::after {
-  left: 32%;
-  top: 68%;
-  width: 36%;
-  height: 7px;
-  border-radius: 999px;
-}
-
-.dog-face {
-  position: absolute;
-  left: 50%;
-  top: 18%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 7rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.dog-ear {
-  position: absolute;
-  top: 18%;
-  width: 28%;
-  height: 34%;
-  border-radius: 56% 56% 48% 48%;
-  background: #5a3627;
-}
-
-.dog-ear.left {
-  left: -6%;
-  transform: rotate(26deg);
-}
-
-.dog-ear.right {
-  right: -6%;
-  transform: rotate(-26deg);
-}
-
-.story-card {
-  right: 4%;
-  bottom: 15%;
-  width: 245px;
-  height: 178px;
-  padding: 24px;
-  border-radius: 24px;
-  background: #fff6e3;
-}
-
-.story-card span {
-  display: block;
-  height: 16px;
-  margin-bottom: 16px;
-  border-radius: 999px;
-  background: #df6b5b;
-}
-
-.story-card span:nth-child(2) {
-  width: 72%;
-  background: #f4c15d;
-}
-
-.story-card span:nth-child(3) {
-  width: 46%;
-  background: #21705a;
-}
-
-.truth-chip {
-  right: 26%;
-  top: 12%;
-  display: grid;
-  place-items: center;
-  width: 108px;
-  height: 108px;
-  border-radius: 24px;
-  background: var(--coral);
-  color: #ffffff;
-  font-size: 2rem;
-  font-weight: 900;
-  transform: rotate(9deg);
-}
-
 .pixel-scene {
   position: absolute;
-  left: 2%;
-  right: 2%;
+  inset: 0;
   bottom: 0;
-  height: 118px;
+  min-height: 100%;
   overflow: hidden;
   border: 2px solid rgba(20, 33, 31, 0.08);
   border-radius: 8px;
   background:
-    linear-gradient(180deg, #aee7f6 0 48%, #7bc756 48% 100%),
+    linear-gradient(180deg, #9be0f4 0 58%, #8edb63 58% 100%),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 10px, transparent 10px 20px);
   box-shadow: 0 16px 36px rgba(37, 55, 47, 0.11);
   image-rendering: pixelated;
@@ -329,7 +212,7 @@ h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 54px;
+  height: 42%;
   background:
     repeating-linear-gradient(90deg, transparent 0 24px, rgba(34, 126, 54, 0.28) 24px 30px, transparent 30px 52px),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0 4px, transparent 4px 12px),
@@ -351,15 +234,71 @@ h1 {
 }
 
 .cloud-one {
-  right: 46px;
-  top: 20px;
+  right: 42px;
+  top: 48px;
 }
 
 .cloud-two {
-  right: 155px;
-  top: 36px;
+  right: 188px;
+  top: 105px;
   transform: scale(0.62);
   opacity: 0.82;
+}
+
+.cloud-three {
+  left: 42px;
+  top: 58px;
+  transform: scale(0.78);
+  opacity: 0.9;
+}
+
+.pixel-bird {
+  position: absolute;
+  z-index: 2;
+  width: 6px;
+  height: 6px;
+  background: #2b5148;
+  image-rendering: pixelated;
+  animation: birdFly 9s linear infinite;
+}
+
+.pixel-bird::before,
+.pixel-bird::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 6px;
+  border-top: 4px solid #2b5148;
+}
+
+.pixel-bird::before {
+  right: 4px;
+  transform: skewY(-22deg);
+}
+
+.pixel-bird::after {
+  left: 4px;
+  transform: skewY(22deg);
+}
+
+.bird-one {
+  left: -34px;
+  top: 76px;
+}
+
+.bird-two {
+  left: -112px;
+  top: 132px;
+  transform: scale(0.76);
+  animation-delay: 2.4s;
+}
+
+.bird-three {
+  left: -198px;
+  top: 44px;
+  transform: scale(0.58);
+  animation-delay: 5.1s;
 }
 
 .pixel-tree {
@@ -729,6 +668,15 @@ h1 {
   }
 }
 
+@keyframes birdFly {
+  0% {
+    margin-left: -40px;
+  }
+  100% {
+    margin-left: calc(100% + 260px);
+  }
+}
+
 .quiz-picker,
 .quiz-stage,
 .result-stage {
@@ -1051,7 +999,7 @@ h1 {
   }
 
   .pixel-scene {
-    height: 104px;
+    min-height: 100%;
   }
 
   .quiz-grid {
@@ -1074,27 +1022,39 @@ h1 {
     min-height: 310px;
   }
 
-  .dog-card {
-    left: 2%;
-  }
-
-  .story-card {
-    right: 0;
-    width: 190px;
-    height: 142px;
-  }
-
-  .truth-chip {
-    right: 14%;
-    width: 86px;
-    height: 86px;
-    font-size: 1.55rem;
-  }
-
   .pixel-scene {
-    left: 0;
-    right: 0;
-    height: 94px;
+    min-height: 100%;
+  }
+
+  .cloud-one {
+    right: 4px;
+    top: 36px;
+    transform: scale(0.72);
+  }
+
+  .cloud-two {
+    right: 122px;
+    top: 92px;
+  }
+
+  .cloud-three {
+    left: 16px;
+    top: 48px;
+    transform: scale(0.58);
+  }
+
+  .pixel-tree {
+    left: 8px;
+    transform: scale(0.86);
+    transform-origin: left bottom;
+  }
+
+  .pixel-fence {
+    left: 74px;
+  }
+
+  .bush-one {
+    left: 82px;
   }
 
   .pixel-dog {
