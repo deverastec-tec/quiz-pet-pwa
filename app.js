@@ -313,11 +313,13 @@ function showResult() {
     resultTitle.textContent = profile.title;
     resultText.textContent = profile.text;
     scoreRing.textContent = "Match";
+    scoreRing.style.setProperty("--score", "100%");
   } else {
     const percent = Math.round((state.score / total) * 100);
     resultTitle.textContent = getScoreTitle(percent);
     resultText.textContent = `Voce acertou ${state.score} de ${total} perguntas.`;
     scoreRing.textContent = `${percent}%`;
+    scoreRing.style.setProperty("--score", `${percent}%`);
   }
 
   resultStage.scrollIntoView({ behavior: "smooth", block: "start" });
