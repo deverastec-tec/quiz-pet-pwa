@@ -29,18 +29,31 @@ const quizCatalog = [
   }
 ];
 
+const breedImages = {
+  dachshund: img("https://commons.wikimedia.org/wiki/Special:FilePath/A%20dachshund.jpg?width=900", "Dachshund", "https://commons.wikimedia.org/wiki/File:A_dachshund.jpg"),
+  pug: img("https://commons.wikimedia.org/wiki/Special:FilePath/Pug%20portrait.jpg?width=900", "Pug", "https://commons.wikimedia.org/wiki/Pug"),
+  poodle: img("https://commons.wikimedia.org/wiki/Special:FilePath/Standard%20Poodle.JPG?width=900", "Poodle", "https://commons.wikimedia.org/wiki/File:Standard_Poodle.JPG"),
+  husky: img("https://commons.wikimedia.org/wiki/Special:FilePath/Siberian%20Husky%20%285743885083%29.jpg?width=900", "Husky Siberiano", "https://commons.wikimedia.org/wiki/File:Siberian_Husky_(5743885083).jpg"),
+  dalmatian: img("https://commons.wikimedia.org/wiki/Special:FilePath/Dalmatian%20dog.jpg?width=900", "Dalmata", "https://commons.wikimedia.org/wiki/File:Dalmatian_dog.jpg"),
+  corgi: img("https://commons.wikimedia.org/wiki/Special:FilePath/Welshgorgi.jpg?width=900", "Corgi", "https://commons.wikimedia.org/wiki/File:Welshgorgi.jpg"),
+  golden: img("https://commons.wikimedia.org/wiki/Special:FilePath/Golden%20Retriever.jpg?width=900", "Golden Retriever", "https://commons.wikimedia.org/wiki/File:Golden_Retriever.jpg"),
+  sharpei: img("https://commons.wikimedia.org/wiki/Special:FilePath/Sharpei.jpg?width=900", "Shar Pei", "https://commons.wikimedia.org/wiki/File:Sharpei.jpg"),
+  pinscher: img("https://commons.wikimedia.org/wiki/Special:FilePath/Miniature%20Pinscher.jpg?width=900", "Pinscher", "https://commons.wikimedia.org/wiki/File:Miniature_Pinscher.jpg"),
+  rottweiler: img("https://commons.wikimedia.org/wiki/Special:FilePath/Rottweiler%20dog%20%281%29.jpg?width=900", "Rottweiler", "https://commons.wikimedia.org/wiki/File:Rottweiler_dog_(1).jpg")
+};
+
 const questions = {
   breed: [
-    q("Silhueta baixa, orelhas longas e corpo comprido. Que raca e essa?", ["Dachshund", "Husky Siberiano", "Boxer", "Poodle"], 0, "O Dachshund tambem e conhecido como salsichinha.", "long"),
-    q("Focinho achatado, olhos grandes e corpinho compacto.", ["Pug", "Border Collie", "Akita", "Labrador"], 0, "O Pug costuma ser pequeno, robusto e muito expressivo.", "round"),
-    q("Pelo enrolado, postura elegante e fama de inteligente.", ["Poodle", "Beagle", "Bulldog Ingles", "Chow Chow"], 0, "Poodles aparecem em varios portes e aprendem comandos muito rapido.", "curly"),
-    q("Orelhas triangulares, mascara clara e cara de aventureiro do frio.", ["Husky Siberiano", "Dalmata", "Shih-tzu", "Dogue Alemao"], 0, "O Husky foi criado para tracao em regioes frias.", "wolf"),
-    q("Pintas pelo corpo todo e visual de bombeiro de filme.", ["Dalmata", "Corgi", "Golden Retriever", "Pinscher"], 0, "Os Dalmatasa sao famosos pela pelagem branca com manchas.", "spots"),
-    q("Baixinho, forte, orelhas grandes e jeito de pequeno pastor.", ["Corgi", "Samoieda", "Rottweiler", "Maltese"], 0, "Corgis sao pastores baixinhos, muito ativos e atentos.", "short"),
-    q("Pelagem dourada, expressao doce e energia de melhor amigo.", ["Golden Retriever", "Shar Pei", "Doberman", "Lhasa Apso"], 0, "Golden Retrievers sao sociaveis e populares em familias.", "golden"),
-    q("Ruguinhas no rosto e pele bem solta.", ["Shar Pei", "Pastor Alemao", "Whippet", "Yorkshire"], 0, "O Shar Pei e conhecido pelas dobras marcantes.", "wrinkle"),
-    q("Pequeno, pelagem lisa, muito alerta e cheio de atitude.", ["Pinscher", "Sao Bernardo", "Basset Hound", "Old English Sheepdog"], 0, "Pinschers tendem a ser vigilantes apesar do tamanho.", "tiny"),
-    q("Grande, preto e castanho, corpo forte e olhar confiante.", ["Rottweiler", "Pomerania", "Poodle Toy", "Beagle"], 0, "Rottweilers sao fortes, leais e precisam de boa socializacao.", "strong")
+    q("Olhe a foto: que raca e essa?", ["Dachshund", "Husky Siberiano", "Boxer", "Poodle"], 0, "O Dachshund tambem e conhecido como salsichinha.", "long", null, breedImages.dachshund),
+    q("Olhe a foto: que raca e essa?", ["Pug", "Border Collie", "Akita", "Labrador"], 0, "O Pug costuma ser pequeno, robusto e muito expressivo.", "round", null, breedImages.pug),
+    q("Olhe a foto: que raca e essa?", ["Poodle", "Beagle", "Bulldog Ingles", "Chow Chow"], 0, "Poodles aparecem em varios portes e aprendem comandos muito rapido.", "curly", null, breedImages.poodle),
+    q("Olhe a foto: que raca e essa?", ["Husky Siberiano", "Dalmata", "Shih-tzu", "Dogue Alemao"], 0, "O Husky foi criado para tracao em regioes frias.", "wolf", null, breedImages.husky),
+    q("Olhe a foto: que raca e essa?", ["Dalmata", "Corgi", "Golden Retriever", "Pinscher"], 0, "Os Dalmatas sao famosos pela pelagem branca com manchas.", "spots", null, breedImages.dalmatian),
+    q("Olhe a foto: que raca e essa?", ["Corgi", "Samoieda", "Rottweiler", "Maltese"], 0, "Corgis sao pastores baixinhos, muito ativos e atentos.", "short", null, breedImages.corgi),
+    q("Olhe a foto: que raca e essa?", ["Golden Retriever", "Shar Pei", "Doberman", "Lhasa Apso"], 0, "Golden Retrievers sao sociaveis e populares em familias.", "golden", null, breedImages.golden),
+    q("Olhe a foto: que raca e essa?", ["Shar Pei", "Pastor Alemao", "Whippet", "Yorkshire"], 0, "O Shar Pei e conhecido pelas dobras marcantes.", "wrinkle", null, breedImages.sharpei),
+    q("Olhe a foto: que raca e essa?", ["Pinscher", "Sao Bernardo", "Basset Hound", "Old English Sheepdog"], 0, "Pinschers tendem a ser vigilantes apesar do tamanho.", "tiny", null, breedImages.pinscher),
+    q("Olhe a foto: que raca e essa?", ["Rottweiler", "Pomerania", "Poodle Toy", "Beagle"], 0, "Rottweilers sao fortes, leais e precisam de boa socializacao.", "strong", null, breedImages.rottweiler)
   ],
   story: [
     q("Luna ouviu a coleira antes do passeio. O que ela fez?", ["Correu para a porta abanando o rabo", "Foi dormir embaixo da cama", "Escondeu o pote de racao", "Comecou a miar"], 0, "Muitos caes associam sons e objetos a rotinas boas."),
@@ -156,8 +169,12 @@ installButton.addEventListener("click", async () => {
   installButton.hidden = true;
 });
 
-function q(title, options, answer, explanation, visual = "default", weights = null) {
-  return { title, options, answer, explanation, visual, weights };
+function img(src, alt, source) {
+  return { src, alt, source };
+}
+
+function q(title, options, answer, explanation, visual = "default", weights = null, image = null) {
+  return { title, options, answer, explanation, visual, weights, image };
 }
 
 function renderQuizGrid() {
@@ -314,6 +331,16 @@ function getScoreTitle(percent) {
 
 function getVisual(question, quizId) {
   if (quizId === "breed") {
+    if (question.image) {
+      return `
+        <figure class="dog-photo-card">
+          <img src="${question.image.src}" alt="${question.image.alt}" loading="eager" />
+          <figcaption>
+            <a href="${question.image.source}" target="_blank" rel="noreferrer">Foto: Wikimedia Commons</a>
+          </figcaption>
+        </figure>
+      `;
+    }
     return `<div class="dog-portrait">${dogSvg(question.visual)}</div>`;
   }
   if (quizId === "story") {
