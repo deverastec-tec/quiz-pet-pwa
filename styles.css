@@ -313,29 +313,247 @@ h1 {
   border: 2px solid rgba(20, 33, 31, 0.08);
   border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(255, 250, 242, 0.2), rgba(255, 250, 242, 0.78)),
-    repeating-linear-gradient(90deg, rgba(33, 112, 90, 0.1) 0 10px, transparent 10px 20px);
+    linear-gradient(180deg, #aee7f6 0 48%, #7bc756 48% 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 10px, transparent 10px 20px);
   box-shadow: 0 16px 36px rgba(37, 55, 47, 0.11);
+  image-rendering: pixelated;
 }
 
 .hero[hidden] .pixel-scene {
   display: none;
 }
 
+.pixel-scene::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 54px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 24px, rgba(34, 126, 54, 0.28) 24px 30px, transparent 30px 52px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0 4px, transparent 4px 12px),
+    #75c946;
+}
+
+.pixel-cloud {
+  position: absolute;
+  z-index: 1;
+  width: 68px;
+  height: 18px;
+  background: #ffffff;
+  box-shadow:
+    12px -8px 0 #ffffff,
+    26px -14px 0 #ffffff,
+    40px -8px 0 #ffffff,
+    54px 0 0 #ffffff;
+  opacity: 0.95;
+}
+
+.cloud-one {
+  right: 46px;
+  top: 20px;
+}
+
+.cloud-two {
+  right: 155px;
+  top: 36px;
+  transform: scale(0.62);
+  opacity: 0.82;
+}
+
+.pixel-tree {
+  position: absolute;
+  left: 16px;
+  bottom: 29px;
+  z-index: 2;
+  width: 90px;
+  height: 88px;
+}
+
+.pixel-tree span {
+  position: absolute;
+  display: block;
+}
+
+.tree-trunk {
+  left: 38px;
+  bottom: 0;
+  width: 18px;
+  height: 52px;
+  background: #7b4a2a;
+  box-shadow:
+    -8px 18px 0 #5a3627,
+    12px 12px 0 #5a3627;
+}
+
+.tree-leaf {
+  background: #2f9a37;
+  box-shadow:
+    6px 0 0 #55b83f,
+    12px 0 0 #8bd84a,
+    0 6px 0 #278433,
+    6px 6px 0 #6fcf45,
+    12px 6px 0 #3faa38;
+}
+
+.leaf-one {
+  left: 5px;
+  top: 16px;
+  width: 34px;
+  height: 30px;
+}
+
+.leaf-two {
+  left: 22px;
+  top: 0;
+  width: 42px;
+  height: 34px;
+}
+
+.leaf-three {
+  left: 50px;
+  top: 20px;
+  width: 34px;
+  height: 34px;
+}
+
+.leaf-four {
+  left: 18px;
+  top: 34px;
+  width: 36px;
+  height: 28px;
+}
+
+.leaf-five {
+  left: 48px;
+  top: 42px;
+  width: 28px;
+  height: 26px;
+}
+
+.pixel-fence {
+  position: absolute;
+  left: 96px;
+  right: 18px;
+  bottom: 38px;
+  z-index: 1;
+  height: 34px;
+  background:
+    linear-gradient(#fff7dd 0 8px, transparent 8px 100%) 0 11px / 100% 8px no-repeat,
+    linear-gradient(#fff7dd 0 8px, transparent 8px 100%) 0 25px / 100% 8px no-repeat;
+}
+
+.pixel-fence span {
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 34px;
+  background: #fff7dd;
+  box-shadow: 3px 0 0 #e5d8ba;
+}
+
+.pixel-fence span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -7px;
+  width: 0;
+  height: 0;
+  border-right: 6px solid transparent;
+  border-bottom: 7px solid #fff7dd;
+  border-left: 6px solid transparent;
+}
+
+.pixel-fence span:nth-child(1) {
+  left: 6%;
+}
+
+.pixel-fence span:nth-child(2) {
+  left: 23%;
+}
+
+.pixel-fence span:nth-child(3) {
+  left: 40%;
+}
+
+.pixel-fence span:nth-child(4) {
+  left: 57%;
+}
+
+.pixel-fence span:nth-child(5) {
+  left: 74%;
+}
+
+.pixel-fence span:nth-child(6) {
+  left: 91%;
+}
+
+.pixel-bush,
+.pixel-flowers {
+  position: absolute;
+  z-index: 3;
+  image-rendering: pixelated;
+}
+
+.pixel-bush {
+  bottom: 26px;
+  width: 48px;
+  height: 22px;
+  background: #23833a;
+  box-shadow:
+    10px -10px 0 #3faa38,
+    23px -14px 0 #65bf44,
+    34px -7px 0 #2f9a37;
+}
+
+.bush-one {
+  left: 112px;
+}
+
+.bush-two {
+  right: 20px;
+}
+
+.pixel-flowers {
+  bottom: 30px;
+  width: 8px;
+  height: 8px;
+  background: #ffe76a;
+  box-shadow:
+    8px 0 0 #ff7e9d,
+    16px 5px 0 #ffffff,
+    26px -3px 0 #ffe76a,
+    34px 4px 0 #ff7e9d,
+    5px 8px 0 #2f9a37,
+    24px 9px 0 #2f9a37;
+}
+
+.flower-one {
+  left: 28px;
+}
+
+.flower-two {
+  right: 70px;
+}
+
 .pixel-ground {
   position: absolute;
+  z-index: 4;
   left: 0;
   right: 0;
   bottom: 18px;
   height: 12px;
   background:
     repeating-linear-gradient(90deg, #21705a 0 18px, #8fc0a7 18px 30px),
+    repeating-linear-gradient(0deg, #2d9b39 0 4px, #75c946 4px 8px),
     #21705a;
   image-rendering: pixelated;
 }
 
 .pixel-dog {
   position: absolute;
+  z-index: 6;
   left: 0;
   bottom: 30px;
   width: 104px;
@@ -426,6 +644,7 @@ h1 {
 
 .pixel-poop {
   position: absolute;
+  z-index: 5;
   left: 43%;
   bottom: 30px;
   width: 38px;
