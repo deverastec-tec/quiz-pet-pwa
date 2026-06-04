@@ -117,7 +117,8 @@ const state = {
   index: 0,
   score: 0,
   locked: false,
-  matchScores: {}
+  matchScores: {},
+  roundQuestions: []
 };
 
 const quizGrid = document.querySelector("#quizGrid");
@@ -205,6 +206,17 @@ function startQuiz(quizId) {
   state.score = 0;
   state.locked = false;
   state.matchScores = { calm: 0, social: 0, active: 0, independent: 0 };
+  state.roundQuestions = shuffle(questions[quizId]).map((question) => {
+    const shuffledOptions = shuffle(
+      question.options.map((option, optionIndex) => ({
+        option,
+        isCorrect: optionIndex === question.answer,
+        weight: question.weights ? question.weights[optionIndex] : null
+      }))
+    );
+
+    return { ...question, shuffledOptions };
+  });
 
   document.querySelector(".hero").hidden = true;
   document.querySelector(".quiz-picker").hidden = true;
@@ -217,7 +229,7 @@ function startQuiz(quizId) {
 function renderQuestion() {
   const current = getCurrentQuestion();
   const quiz = quizCatalog.find((item) => item.id === state.quizId);
-  const total = questions[state.quizId].length;
+  const total = state.roundQuestions.length;
 
   state.locked = false;
   progressText.textContent = `${state.index + 1} de ${total}`;
@@ -230,11 +242,11 @@ function renderQuestion() {
   nextButton.hidden = true;
 
   answers.innerHTML = "";
-  current.options.forEach((option, optionIndex) => {
+  current.shuffledOptions.forEach((answerOption, optionIndex) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "answer-button";
-    button.textContent = option;
+    button.textContent = answerOption.option;
     button.addEventListener("click", () => chooseAnswer(optionIndex));
     answers.appendChild(button);
   });
@@ -246,11 +258,12 @@ function chooseAnswer(optionIndex) {
 
   const current = getCurrentQuestion();
   const isMatchQuiz = state.quizId === "match";
-  const isCorrect = optionIndex === current.answer;
+  const selected = current.shuffledOptions[optionIndex];
+  const isCorrect = selected.isCorrect;
   const buttons = [...answers.querySelectorAll(".answer-button")];
 
   if (isMatchQuiz) {
-    const profile = current.weights[optionIndex];
+    const profile = selected.weight;
     state.matchScores[profile] += 1;
     state.score += 1;
   } else if (isCorrect) {
@@ -260,7 +273,7 @@ function chooseAnswer(optionIndex) {
   buttons.forEach((button, index) => {
     button.disabled = true;
     if (isMatchQuiz && index === optionIndex) button.classList.add("correct");
-    if (!isMatchQuiz && index === current.answer) button.classList.add("correct");
+    if (!isMatchQuiz && current.shuffledOptions[index].isCorrect) button.classList.add("correct");
     if (!isMatchQuiz && index === optionIndex && !isCorrect) button.classList.add("wrong");
   });
 
@@ -271,12 +284,12 @@ function chooseAnswer(optionIndex) {
       ? `Acertou! ${current.explanation}`
       : `Quase. ${current.explanation}`;
 
-  nextButton.textContent = state.index === questions[state.quizId].length - 1 ? "Ver resultado" : "Proxima";
+  nextButton.textContent = state.index === state.roundQuestions.length - 1 ? "Ver resultado" : "Proxima";
   nextButton.hidden = false;
 }
 
 function nextQuestion() {
-  const total = questions[state.quizId].length;
+  const total = state.roundQuestions.length;
   if (state.index < total - 1) {
     state.index += 1;
     renderQuestion();
@@ -287,7 +300,7 @@ function nextQuestion() {
 
 function showResult() {
   const quiz = quizCatalog.find((item) => item.id === state.quizId);
-  const total = questions[state.quizId].length;
+  const total = state.roundQuestions.length;
   progressFill.style.width = "100%";
   quizStage.hidden = true;
   resultStage.hidden = false;
@@ -319,7 +332,16 @@ function showHome() {
 }
 
 function getCurrentQuestion() {
-  return questions[state.quizId][state.index];
+  return state.roundQuestions[state.index];
+}
+
+function shuffle(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function getScoreTitle(percent) {
